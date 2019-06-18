@@ -4,9 +4,10 @@ type mode =
   | Binary
   | Hex
   | Ascii
+  | Snarky
 
 let mode_of_string s =
-  List.find_map_exn [ ("ascii", Ascii); ("binary", Binary); ("hex", Hex) ] ~f:(fun (m, mode) ->
+  List.find_map_exn [ ("snarky", Snarky); ("ascii", Ascii); ("binary", Binary); ("hex", Hex) ] ~f:(fun (m, mode) ->
     if String.is_prefix ~prefix:s m
     then Some mode
     else None)
@@ -33,6 +34,7 @@ let bits_to_string bits =
 
 let parse mode s = 
   match mode with
+  | Snarky -> failwith "Cannot parse snarky"
   | Ascii -> s
   | Hex -> Hex.to_string (`Hex s)
   | Binary ->
@@ -44,6 +46,12 @@ let parse mode s =
 
 let output mode s =
   match mode with
+  | Snarky ->
+    String.concat_array ~sep:", "
+      (Array.map (string_to_bits s) ~f:(function
+           | true -> "1b"
+           | false -> "0b"))
+    |> sprintf "[%s]"
   | Ascii -> s
   | Hex -> let (`Hex s) = Hex.of_string s in s
   | Binary ->
