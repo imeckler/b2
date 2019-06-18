@@ -1,0 +1,11 @@
+(executable
+  (name b2)
+  (public_name b2)
+  (libraries
+    hex
+    core
+    digestif.c )
+  (preprocess (pps ppx_jane ppx_deriving.eq js_of_ocaml-ppx))
+  (js_of_ocaml (flags
+  --debuginfo --pretty --sourcemap
+  +nat.js)) )
